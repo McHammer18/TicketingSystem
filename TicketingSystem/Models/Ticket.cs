@@ -21,7 +21,8 @@ namespace TicketingSystem.Models
 
         [Required(ErrorMessage ="Please enter a Status (Checking in, Waiting to start, in Race, and done")]
         public string StatusId { get; set; }
-        public string StatusName { get; set; }
+
+        public Status? Status { get; set; }
 
 
     }
