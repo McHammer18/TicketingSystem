@@ -6,7 +6,7 @@ namespace TicketingSystem.Models
     public class Ticket
     {
         [Key]
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         [Required(ErrorMessage ="Please enter a name")]
         [StringLength(20)]

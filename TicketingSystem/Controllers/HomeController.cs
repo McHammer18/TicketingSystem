@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Data.Common;
 using System.Diagnostics;
 using TicketingSystem.Models;
@@ -76,16 +77,21 @@ namespace TicketingSystem.Controllers
         [HttpPost]
         public IActionResult Edit([FromRoute] string id, Ticket selected)
         {
-            if (selected.StatusId == null)
+            var key = nameof(Ticket.Name);
+            var val = ModelState.GetValidationState(key);
+            if (val == ModelValidationState.Valid)
             {
-                context.Tickets.Remove(selected);
-            }
-            else
-            {
-                string newStatusId = selected.StatusId;
-                selected = context.Tickets.Find(selected.Id);
-                selected.StatusId = newStatusId;
-                context.Tickets.Update(selected);
+                if (selected.StatusId == null)
+                {
+                    context.Tickets.Remove(selected);
+                }
+                else
+                {
+                    string newStatusId = selected.StatusId;
+                    selected = context.Tickets.Find(selected.Id);
+                    selected.StatusId = newStatusId;
+                    context.Tickets.Update(selected);
+                }
             }
             context.SaveChanges();
 
