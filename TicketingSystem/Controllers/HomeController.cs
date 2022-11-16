@@ -3,18 +3,22 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Data.Common;
 using System.Diagnostics;
 using TicketingSystem.Models;
+using TicketingSystem.Repository;
 
 namespace TicketingSystem.Controllers
 {
     public class HomeController : Controller
     {
+        //Added dependancy injection with the Repository class
         private readonly ILogger<HomeController> _logger;
         private TicketContext context;
+        private ITicketRepository ticketRepository;
 
-        public HomeController(ILogger<HomeController> logger, TicketContext dbcontext)
+        public HomeController(ILogger<HomeController> logger, ITicketRepository repo, TicketContext cntx)
         {
             _logger = logger;
-            context = dbcontext;
+            ticketRepository = repo;
+            context = cntx;
         }
 
         public IActionResult Index(string id)
@@ -23,24 +27,7 @@ namespace TicketingSystem.Controllers
             ViewBag.Filters = filters;
             ViewBag.Statuses = context.Statuses.ToList();
 
-            IQueryable<Ticket> query = context.Tickets;
-            if (filters.HasName)
-            {
-                query = query.Where(t=> t.Name == filters.Name);
-            }
-            if (filters.HasStatus)
-            {
-                query = query.Where(t => t.StatusId == filters.StatusId);
-            }
-            if (filters.HasSprintNumber)
-            {
-                query = query.Where(t => t.SprintNum == filters.SprintNum);
-            }
-            if (filters.HasPointValue)
-            {
-                query = query.Where(t => t.Point == filters.Point);
-            }
-            var tickets = query;
+            List<Ticket> tickets = ticketRepository.GetAllTickets();
 
             return View(tickets);
         }
@@ -56,8 +43,7 @@ namespace TicketingSystem.Controllers
         {
             if (ModelState.IsValid)
             {
-                context.Tickets.Add(ticket);
-                context.SaveChanges();
+                ticketRepository.InsertTicket(ticket);
                 return RedirectToAction("Index");
             }
             else
@@ -83,14 +69,14 @@ namespace TicketingSystem.Controllers
             {
                 if (selected.StatusId == null)
                 {
-                    context.Tickets.Remove(selected);
+                    ticketRepository.DeleteTicket(selected);
                 }
                 else
                 {
                     string newStatusId = selected.StatusId;
                     selected = context.Tickets.Find(selected.Id);
                     selected.StatusId = newStatusId;
-                    context.Tickets.Update(selected);
+                    ticketRepository.UpdateTicket(selected);
                 }
             }
             context.SaveChanges();
