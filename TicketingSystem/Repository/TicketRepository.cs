@@ -48,5 +48,10 @@ namespace TicketingSystem.Repository
         {
             context.Tickets.Update(ticket);
         }
+
+        public void GetStatus()
+        {
+            context.Statuses.ToList();
+        }
     }
 }

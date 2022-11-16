@@ -7,9 +7,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using TicketingSystem.Repository;
-using TicketingSystem.Controllers;
-using TicketingSystem.Models;
 using NuGet.Frameworks;
 
 namespace Ticketing_Test
@@ -30,7 +27,6 @@ namespace Ticketing_Test
             //Arange
             var logger = new Mock<ILogger<HomeController>>();
             var trMock = new Mock<ITicketRepository>();
-            var cntx = new Mock<TicketContext>();
             List<Ticket> lst = new List<Ticket>()
             {
                 new Ticket() {Id = 1, Name = "FirstTicket", Description="Sprinter", Point="3", SprintNum="34", StatusId = "checkin"},
@@ -39,7 +35,7 @@ namespace Ticketing_Test
 
             trMock.Setup(r => r.GetAllTickets()).Returns(lst);
 
-            HomeController ctrl = new HomeController(logger.Object, trMock.Object, cntx.Object);
+            HomeController ctrl = new HomeController(logger.Object, trMock.Object);
 
             //Action
             var result = ctrl.Index("all");

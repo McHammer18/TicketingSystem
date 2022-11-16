@@ -16,5 +16,7 @@ namespace TicketingSystem.Repository
         void DeleteTicket(Ticket ticket);
 
         void UpdateTicket(Ticket ticket);
+
+        void GetStatus();
     }
 }

@@ -11,21 +11,19 @@ namespace TicketingSystem.Controllers
     {
         //Added dependancy injection with the Repository class
         private readonly ILogger<HomeController> _logger;
-        private TicketContext context;
         private ITicketRepository ticketRepository;
 
-        public HomeController(ILogger<HomeController> logger, ITicketRepository repo, TicketContext cntx)
+        public HomeController(ILogger<HomeController> logger, ITicketRepository repo)
         {
             _logger = logger;
             ticketRepository = repo;
-            context = cntx;
         }
 
         public IActionResult Index(string id)
         {
             var filters = new Filters(id);
             ViewBag.Filters = filters;
-            ViewBag.Statuses = context.Statuses.ToList();
+           // ViewBag.Statuses = ticketRepository.GetStatus();
 
             List<Ticket> tickets = ticketRepository.GetAllTickets();
 
@@ -34,7 +32,7 @@ namespace TicketingSystem.Controllers
         [HttpGet]
         public IActionResult Add()
         {
-            ViewBag.Statuses = context.Statuses.ToList();
+            //ViewBag.Statuses = ticketRepository.GetStatus();
             return View();
         }
 
@@ -48,7 +46,7 @@ namespace TicketingSystem.Controllers
             }
             else
             {
-                ViewBag.Statuses = context.Statuses.ToList();
+                //ViewBag.Statuses = ticketRepository.GetStatus();
                 return View(ticket);
             }
         }
@@ -74,12 +72,12 @@ namespace TicketingSystem.Controllers
                 else
                 {
                     string newStatusId = selected.StatusId;
-                    selected = context.Tickets.Find(selected.Id);
+                    selected =ticketRepository.Find(selected.Id);
                     selected.StatusId = newStatusId;
                     ticketRepository.UpdateTicket(selected);
                 }
             }
-            context.SaveChanges();
+            ticketRepository.Save();
 
             return RedirectToAction("Index", new { ID = id });
         }
