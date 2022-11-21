@@ -12,6 +12,11 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("TicketContext"))
 
 builder.Services.AddScoped<ITicketRepository, TicketRepository>();
 
+builder.Services.AddScoped<IStatus, Status>(sp =>
+{
+    return new Status() { StatusId = "waiting", StatusName = "Waiting" };
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
